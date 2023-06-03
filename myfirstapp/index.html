@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Skydiving Booking</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: #333333;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 36px;
+            margin: 0;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .form {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .form input,
+        .form select {
+            padding: 10px;
+            margin-bottom: 10px;
+            width: 300px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .form button {
+            padding: 10px 20px;
+            background-color: #009688;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .form button:hover {
+            background-color: #00796b;
+        }
+    </style>
+    <script>
+        function getRandomBackgroundImage() {
+            var backgroundImageUrls = [
+                'https://www.skydiveoc.com/images/article/skydiving-vs-parachuting-head-mini.jpg',
+                'https://assets.travelloapp.com/uploads/deal/96849dbe17bbd57807ca39f2573b1a33518731b6100de568e5ecf389eeb7aac9.jpg',
+                'https://images.pexels.com/photos/210243/pexels-photo-210243.jpeg?cs=srgb&dl=pexels-pixabay-210243.jpg&fm=jpg',
+                'https://cdn.wallpapersafari.com/12/73/wx4vF6.jpg'
+            ];
+            var randomIndex = Math.floor(Math.random() * backgroundImageUrls.length);
+            return backgroundImageUrls[randomIndex];
+        }
+
+        function bookSkydiving(event) {
+            event.preventDefault();
+            var name = document.getElementById("nameInput").value;
+            var email = document.getElementById("emailInput").value;
+            var date = document.getElementById("dateInput").value;
+            if (name && email && date) {
+                // Perform booking logic here
+                alert("Booking Successful!\n\nThank you, " + name + ", for booking a skydiving ride on " + date + "!");
+                
+                // Send email (using PHP or server-side code)
+                // Update the email sending logic according to your server-side setup
+                // This code assumes a separate PHP file named "send_email.php" handles the email sending
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "send_email.php", true);
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        console.log("Email sent successfully!");
+                    }
+                };
+                xhr.send("name=" + encodeURIComponent(name) + "&email=" + encodeURIComponent(email) + "&date=" + encodeURIComponent(date));
+            }
+        }
+        
+        document.addEventListener("DOMContentLoaded", function() {
+            var backgroundImageUrl = getRandomBackgroundImage();
+            document.body.style.backgroundImage = "url(" + backgroundImageUrl + ")";
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="form">
+            <h1>Skydiving Booking</h1>
+            <form onsubmit="bookSkydiving(event)">
+                <input type="text" id="nameInput" placeholder="Enter your name" required><br>
+                <input type="email" id="emailInput" placeholder="Enter your email" required><br>
+                <input type="date" id="dateInput" required><br>
+                <button type="submit">Book Now</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="additional-info">
+        <h2>Additional Information</h2>
+        <ul>
+            <li><a href="about.html">About Skydiving</a></li>
+            <li><a href="pricing.html">Pricing</a></li>
+        </ul>
+    </div>
+</body>
+</html>
+
