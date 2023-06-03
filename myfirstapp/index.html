@@ -9,29 +9,36 @@
             margin: 0;
             padding: 0;
         }
+
         .header {
             background-color: #333333;
             color: #ffffff;
             padding: 20px;
             text-align: center;
         }
+
         h1 {
             font-size: 36px;
             margin: 0;
         }
-        .content {
-            padding: 20px;
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
+
         .form {
             background-color: rgba(255, 255, 255, 0.8);
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            display: inline-block;
-            margin-top: 20px;
         }
+
         .form input,
-        .form select {
+        .form select,
+        .form textarea {
             padding: 10px;
             margin-bottom: 10px;
             width: 300px;
@@ -39,6 +46,7 @@
             border-radius: 5px;
             font-size: 16px;
         }
+
         .form button {
             padding: 10px 20px;
             background-color: #009688;
@@ -49,41 +57,38 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
+
         .form button:hover {
             background-color: #00796b;
         }
+
         .tabs {
-            background-color: #333;
-            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #333333;
             padding: 10px;
         }
+
         .tab {
+            color: #ffffff;
+            margin: 0 10px;
             cursor: pointer;
-            padding: 10px 20px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
+            transition: color 0.3s ease;
         }
+
         .tab:hover {
-            background-color: #555;
+            color: #00bcd4;
         }
-        .tab-content {
+
+        .content {
             display: none;
-            padding: 20px;
             text-align: left;
+            padding: 20px;
         }
-        .active {
-            background-color: #555;
-        }
-        .pricing-item {
-            margin-bottom: 20px;
-        }
-        .pricing-item h3 {
-            font-size: 24px;
-            margin-top: 0;
-        }
-        .pricing-item p {
-            font-size: 16px;
-            margin-bottom: 0;
+
+        .content.active {
+            display: block;
         }
     </style>
     <script>
@@ -98,34 +103,117 @@
             return backgroundImageUrls[randomIndex];
         }
 
-        function openTab(tabName) {
-            var i, tabContent, tabLinks;
+        function adjustFontColor() {
+            var body = document.body;
+            var computedStyle = getComputedStyle(body);
+            var backgroundColor = computedStyle.backgroundColor;
 
-            // Hide all tab contents
-            tabContent = document.getElementsByClassName("tab-content");
-            for (i = 0; i < tabContent.length; i++) {
-                tabContent[i].style.display = "none";
+            var contrastColor = getContrastColor(backgroundColor);
+            var contentSections = document.getElementsByClassName("content");
+            for (var i = 0; i < contentSections.length; i++) {
+                contentSections[i].style.color = contrastColor;
             }
-
-            // Remove active class from all tab links
-            tabLinks = document.getElementsByClassName("tab");
-            for (i = 0; i < tabLinks.length; i++) {
-                tabLinks[i].classList.remove("active");
-            }
-
-            // Show the selected tab content and set the tab link as active
-            document.getElementById(tabName).style.display = "block";
-            document.getElementById(tabName + "-tab").classList.add("active");
         }
 
+        function getContrastColor(backgroundColor) {
+            var r = parseInt(backgroundColor.slice(4, 7), 16);
+            var g = parseInt(backgroundColor.slice(9, 12), 16);
+            var b = parseInt(backgroundColor.slice(14, 17), 16);
+            var yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+
+            return (yiq >= 128) ? '#000000' : '#ffffff';
+        }
+
+        function changeTab(tabId) {
+            var tabs = document.getElementsByClassName("tab");
+            var contentSections = document.getElementsByClassName("content");
+
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove("active");
+                contentSections[i].classList.remove("active");
+            }
+
+            document.getElementById(tabId).classList.add("active");
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            var backgroundImageUrl = getRandomBackgroundImage();
+            document.body.style.backgroundImage = "url(" + backgroundImageUrl + ")";
+
+            adjustFontColor();
+        });
+    </script>
+</head>
+<body>
+    <div class="header">
+        <h1>Skydiving Booking</h1>
+    </div>
+
+    <div class="container">
+        <div class="form">
+            <h2>Booking Form</h2>
+            <form onsubmit="bookSkydiving(event)">
+                <input type="text" id="nameInput" placeholder="Enter your name" required><br>
+                <input type="email" id="emailInput" placeholder="Enter your email" required><br>
+                <input type="date" id="dateInput" required><br>
+                <button type="submit">Book Now</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" onclick="changeTab('about')">About</div>
+        <div class="tab" onclick="changeTab('pricing')">Pricing</div>
+        <div class="tab" onclick="changeTab('availability')">Availability</div>
+        <div class="tab" onclick="changeTab('contact')">Contact</div>
+        <div class="tab" onclick="changeTab('reviews')">Reviews</div>
+    </div>
+
+    <div class="content active" id="about">
+        <h2>About Skydiving</h2>
+        <p>Skydiving is an exhilarating adventure sport that allows you to experience the thrill of flying through the air and defying gravity. It is a popular activity for adrenaline junkies and those seeking</p>
+        <p>During a skydiving jump, you will exit an aircraft at a high altitude and freefall through the air before deploying a parachute to safely land on the ground. The feeling of soaring through the sky and the breathtaking views below make skydiving an incredible and memorable experience.</p>
+    </div>
+
+    <div class="content" id="pricing">
+        <h2>Pricing</h2>
+        <p>Choose from our different skydiving packages:</p>
+        <ul>
+            <li>Basic Package: Includes a tandem skydive with an experienced instructor - $200</li>
+            <li>Deluxe Package: Includes a tandem skydive with an experienced instructor and video recording of the jump - $250</li>
+            <li>Ultimate Package: Includes a tandem skydive with an experienced instructor, video recording of the jump, and professional photographs - $300</li>
+        </ul>
+    </div>
+
+    <div class="content" id="availability">
+        <h2>Availability</h2>
+        <p>Check the available dates and time slots for skydiving:</p>
+        <!-- Add your availability details here -->
+    </div>
+
+    <div class="content" id="contact">
+        <h2>Contact</h2>
+        <p>For any inquiries or assistance, please contact us:</p>
+        <ul>
+            <li>Email: info@example.com</li>
+            <li>Phone: +1 123-456-7890</li>
+            <li>Address: 123 Skydiving Street, City, Country</li>
+        </ul>
+    </div>
+
+    <div class="content" id="reviews">
+        <h2>Reviews</h2>
+        <p>Read what our customers have to say about their skydiving experience:</p>
+        <!-- Add customer reviews here -->
+    </div>
+
+    <script>
         function bookSkydiving(event) {
             event.preventDefault();
             var name = document.getElementById("nameInput").value;
             var email = document.getElementById("emailInput").value;
             var date = document.getElementById("dateInput").value;
-            var package = document.getElementById("packageInput").value;
-            var message = document.getElementById("messageInput").value;
-            if (name && email && date && package) {
+            if (name && email && date) {
                 // Perform booking logic here
                 alert("Booking Successful!\n\nThank you, " + name + ", for booking a skydiving ride on " + date + "!");
 
@@ -140,69 +228,32 @@
                         console.log("Email sent successfully!");
                     }
                 };
-                xhr.send("name=" + encodeURIComponent(name) + "&email=" + encodeURIComponent(email) + "&date=" + encodeURIComponent(date) + "&package=" + encodeURIComponent(package) + "&message=" + encodeURIComponent(message));
+                xhr.send("name=" + encodeURIComponent(name) + "&email=" + encodeURIComponent(email) + "&date=" + encodeURIComponent(date));
             }
         }
 
-        document.addEventListener("DOMContentLoaded", function () {
+        function changeTab(tabId) {
+            var tabs = document.getElementsByClassName("tab");
+            var contentSections = document.getElementsByClassName("content");
+
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove("active");
+                contentSections[i].classList.remove("active");
+            }
+
+            document.getElementById(tabId).classList.add("active");
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
             var backgroundImageUrl = getRandomBackgroundImage();
             document.body.style.backgroundImage = "url(" + backgroundImageUrl + ")";
+
+            adjustFontColor();
+
+            var contentSections = document.getElementsByClassName("content");
+            contentSections[0].classList.add("active");
         });
     </script>
-</head>
-<body>
-    <div class="header">
-        <h1>Skydiving Booking</h1>
-    </div>
-
-    <div class="tabs">
-        <div id="about-tab" class="tab active" onclick="openTab('about')">About</div>
-        <div id="pricing-tab" class="tab" onclick="openTab('pricing')">Pricing</div>
-    </div>
-
-    <div class="content">
-        <div id="about" class="tab-content" style="display: block;">
-            <h2>About Skydiving</h2>
-            <p>Skydiving is an exhilarating adventure sport that offers the thrill of freefalling from an airplane before safely landing with a parachute. It is a popular activity for adrenaline seekers and provides a unique perspective of the world from above. Whether you're a first-time skydiver or an experienced jumper, our skydiving center is here to provide you with a memorable and safe experience.</p>
-            <p>Our team of highly trained instructors ensures that you receive proper training and guidance before your jump. We prioritize safety and adhere to strict protocols to make sure every skydive is as safe as possible. So, get ready to experience the ultimate thrill of skydiving and create memories that will last a lifetime!</p>
-        </div>
-
-        <div id="pricing" class="tab-content">
-            <h2>Pricing</h2>
-            <div class="pricing-item">
-                <h3>Basic Package</h3>
-                <p>Includes one tandem skydive with an experienced instructor.</p>
-                <p>Price: $200</p>
-            </div>
-            <div class="pricing-item">
-                <h3>Deluxe Package</h3>
-                <p>Includes one tandem skydive, professional photos, and a video recording of your jump.</p>
-                <p>Price: $300</p>
-            </div>
-            <div class="pricing-item">
-                <h3>Premium Package</h3>
-                <p>Includes two tandem skydives, professional photos, and a video recording of both jumps.</p>
-                <p>Price: $500</p>
-            </div>
-        </div>
-
-        <div class="form">
-            <h2>Book a Skydiving Ride</h2>
-            <form onsubmit="bookSkydiving(event)">
-                <input type="text" id="nameInput" placeholder="Enter your name" required><br>
-                <input type="email" id="emailInput" placeholder="Enter your email" required><br>
-                <input type="date" id="dateInput" required><br>
-                <select id="packageInput">
-                    <option value="">Select a package</option>
-                    <option value="Basic Package">Basic Package</option>
-                    <option value="Deluxe Package">Deluxe Package</option>
-                    <option value="Premium Package">Premium Package</option>
-                </select><br>
-                <textarea id="messageInput" placeholder="Enter any additional message"></textarea><br>
-                <button type="submit">Book Now</button>
-            </form>
-        </div>
-    </div>
 </body>
 </html>
 
