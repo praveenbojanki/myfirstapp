@@ -1,0 +1,54 @@
+import boto3
+
+def get_ncrtg_instances(region):
+    """
+    Function to get instances with the tag 'ncrtg' in a specific region
+    """
+    ec2 = boto3.client('ec2', region_name=region)
+
+    # Retrieving instances with the tag 'ncrtg'
+    response = ec2.describe_instances(Filters=[{'Name': 'tag:ncrtg', 'Values': ['*']}])
+
+    instances = []
+    for reservation in response['Reservations']:
+        for instance in reservation['Instances']:
+            instances.append(instance)
+
+    return instances
+
+def get_instance_ami(instance_id, region):
+    """
+    Function to get the AMI ID and creation date of an instance in a specific region
+    """
+    ec2 = boto3.client('ec2', region_name=region)
+
+    # Describe instances and extract AMI ID
+    response = ec2.describe_instances(InstanceIds=[instance_id])
+    ami_id = response['Reservations'][0]['Instances'][0]['ImageId']
+
+    # Describe image and extract creation date
+    response = ec2.describe_images(ImageIds=[ami_id])
+    creation_date = response['Images'][0]['CreationDate']
+
+    return ami_id, creation_date
+
+def main():
+    regions = ['us-east-1', 'us-west-2']
+
+    for region in regions:
+        print(f"Instances in region: {region}")
+        print("=======================================")
+        
+        # Getting instances with the tag 'ncrtg' in the region
+        ncrtg_instances = get_ncrtg_instances(region)
+
+        # Printing instance IDs, AMI IDs, and creation dates
+        for instance in ncrtg_instances:
+            instance_id = instance['InstanceId']
+            ami_id, creation_date = get_instance_ami(instance_id, region)
+            print(f"Instance ID: {instance_id}, AMI ID: {ami_id}, Creation Date: {creation_date}")
+
+        print("\n")
+
+if __name__ == "__main__":
+    main()
